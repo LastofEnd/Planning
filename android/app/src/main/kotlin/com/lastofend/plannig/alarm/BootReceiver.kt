@@ -16,6 +16,7 @@ class BootReceiver : BroadcastReceiver() {
         Log.i("ALARM", "BootReceiver: $action → reschedule all")
 
         try {
+            val strings = AlarmLocalization.load(context)
             val prefs = context.getSharedPreferences("FlutterSharedPreferences", Context.MODE_PRIVATE)
             val raw = prefs.getString("flutter.events_v1", null) ?: return
             val arr = JSONArray(raw)
@@ -27,7 +28,7 @@ class BootReceiver : BroadcastReceiver() {
 
                 val id = e.getString("id")
                 val title = e.optString("title", "Alarm")
-                val body = e.optString("description", "Час події")
+                val body = e.optString("description", strings.eventTime)
                 val hour = e.optInt("hour", 9)
                 val minute = e.optInt("minute", 0)
                 val canSnooze5 = e.optBoolean("canSnooze5", false)
@@ -74,8 +75,8 @@ class BootReceiver : BroadcastReceiver() {
                                             context = context,
                                             id = preId(id),
                                             whenMs = preMs,
-                                            title = "Нагадування за 5 хв",
-                                            body = "$title — скоро початок",
+                                            title = strings.before5Title,
+                                            body = strings.before5Body.replace("{title}", title),
                                             payload = "$id|precall"
                                         )
                                     }
@@ -104,8 +105,8 @@ class BootReceiver : BroadcastReceiver() {
                                     context = context,
                                     id = preIdForDay(id, wd),
                                     whenMs = preMs,
-                                    title = "Нагадування за 5 хв",
-                                    body = "$title — скоро початок",
+                                    title = strings.before5Title,
+                                    body = strings.before5Body.replace("{title}", title),
                                     payload = "$id|precall"
                                 )
                             }
@@ -128,8 +129,8 @@ class BootReceiver : BroadcastReceiver() {
                                 context = context,
                                 id = preId(id),
                                 whenMs = preMs,
-                                title = "Нагадування за 5 хв",
-                                body = "$title — скоро початок",
+                                title = strings.before5Title,
+                                body = strings.before5Body.replace("{title}", title),
                                 payload = "$id|precall"
                             )
                         }

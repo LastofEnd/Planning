@@ -53,12 +53,13 @@ class RingingService : Service() {
                     else "$originalPayload|nosnooze"
                 val requireMathToDismiss = intent.getBooleanExtra("requireMathToDismiss", false) || payloadOnceNoSnooze.contains("|math")
 
+                val strings = AlarmLocalization.load(this)
                 val am = getSystemService(Context.ALARM_SERVICE) as AlarmManager
                 val fireIntent = Intent(this, AlarmReceiver::class.java).apply {
                     action = AlarmReceiver.ACTION_FIRE
                     putExtra("id", id)
-                    putExtra("title", "Відкладено: будильник")
-                    putExtra("body", "Ще 5 хвилин")
+                    putExtra("title", strings.snoozedTitle)
+                    putExtra("body", strings.snoozedBody)
                     putExtra("payload", payloadOnceNoSnooze)
                     putExtra("canSnooze5", false)
                     putExtra("requireMathToDismiss", requireMathToDismiss)
@@ -92,7 +93,8 @@ class RingingService : Service() {
                     canSnooze5 = true
                 }
 
-                createChannelIfNeeded()
+                val strings = AlarmLocalization.load(this)
+                createChannelIfNeeded(strings)
 
                 val launchIntent = Intent(this, MainActivity::class.java).apply {
                     action = "com.lastofend.plannig.ACTION_ALARM_TAP"
@@ -141,11 +143,11 @@ class RingingService : Service() {
                     .setContentIntent(fullScreenPi)
                     .setOngoing(true)
 
-                if (canSnooze5) builder.addAction(0, "Відкласти 5хв", snoozePi)
+                if (canSnooze5) builder.addAction(0, strings.actionSnooze5, snoozePi)
                 if (requireMathToDismiss) {
-                    builder.addAction(0, "Вирішити", fullScreenPi)
+                    builder.addAction(0, strings.actionSolve, fullScreenPi)
                 } else {
-                    builder.addAction(0, "Зупинити", stopPi)
+                    builder.addAction(0, strings.actionStop, stopPi)
                 }
 
                 startForeground(NOTIF_ID, builder.build())
@@ -193,13 +195,13 @@ class RingingService : Service() {
         super.onDestroy()
     }
 
-    private fun createChannelIfNeeded() {
+    private fun createChannelIfNeeded(strings: AlarmStrings) {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
             val nm = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
             val ch = NotificationChannel(
-                CHANNEL_ID, "Smart Alarm", NotificationManager.IMPORTANCE_HIGH
+                CHANNEL_ID, strings.channelName, NotificationManager.IMPORTANCE_HIGH
             ).apply {
-                description = "Alarm notifications"
+                description = strings.channelDescription
                 setShowBadge(true)
                 enableVibration(true)
             }

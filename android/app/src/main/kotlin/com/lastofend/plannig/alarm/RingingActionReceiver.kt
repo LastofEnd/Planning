@@ -32,11 +32,12 @@ class RingingActionReceiver : BroadcastReceiver() {
                 val payload = intent.getStringExtra("payload") ?: "test|notify"
                 val requireMathToDismiss = intent.getBooleanExtra("requireMathToDismiss", false) || payload.contains("|math")
 
+                val strings = AlarmLocalization.load(context)
                 val schedule = Intent(AlarmReceiver.ACTION_FIRE).apply {
                     setPackage(context.packageName)
                     putExtra("id", id)
-                    putExtra("title", "Відкладено: будильник")
-                    putExtra("body", "Ще 5 хвилин")
+                    putExtra("title", strings.snoozedTitle)
+                    putExtra("body", strings.snoozedBody)
                     putExtra("payload", if (payload.contains("|nosnooze")) payload else "$payload|nosnooze")
                     putExtra("repeatDaily", false)
                     putExtra("preCall", false)

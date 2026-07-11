@@ -21,6 +21,7 @@ class AlarmReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         if (intent.action != ACTION_FIRE) return
 
+        val strings = AlarmLocalization.load(context)
         val id = intent.getIntExtra("id", 0)
         val title = intent.getStringExtra("title") ?: "Alarm"
         val body = intent.getStringExtra("body") ?: ""
@@ -56,7 +57,7 @@ class AlarmReceiver : BroadcastReceiver() {
                 val notif = NotificationCompat.Builder(context, CHANNEL_ID)
                     .setSmallIcon(R.mipmap.ic_launcher)
                     .setContentTitle(title)
-                    .setContentText(if (body.isEmpty()) "Час події" else body)
+                    .setContentText(if (body.isEmpty()) strings.eventTime else body)
                     .setPriority(NotificationCompat.PRIORITY_MAX)
                     .setCategory(NotificationCompat.CATEGORY_ALARM)
                     .setAutoCancel(true)

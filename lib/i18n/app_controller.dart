@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:smart_alarm_planner/services/native_alarm.dart';
 
 class AppLanguage {
   final String code;
@@ -84,6 +85,7 @@ class AppController extends ChangeNotifier {
       await _prefs?.setString(_languageKey, 'en');
     }
     await reloadTranslations();
+    await _syncNativeAlarmLocalization();
   }
 
   ThemeMode _themeModeFromString(String? value) {
@@ -126,6 +128,7 @@ class AppController extends ChangeNotifier {
     _languageCode = next;
     await _prefs?.setString(_languageKey, next);
     notifyListeners();
+    await _syncNativeAlarmLocalization();
   }
 
   Future<void> reloadTranslations() async {
@@ -195,6 +198,21 @@ class AppController extends ChangeNotifier {
       value = value.replaceAll('{${entry.key}}', '${entry.value}');
     }
     return value;
+  }
+
+  Future<void> _syncNativeAlarmLocalization() async {
+    await NativeAlarm.syncLocalization(
+      actionStop: t('notification.alarmAction.stop'),
+      actionSolve: t('notification.alarmAction.solve'),
+      actionSnooze5: t('notification.alarmAction.snooze5'),
+      snoozedTitle: t('notification.alarmSnoozedTitle'),
+      snoozedBody: t('notification.alarmSnoozedBody'),
+      eventTime: t('alarm.eventTime'),
+      before5Title: t('notification.before5Title'),
+      before5Body: t('notification.before5Body'),
+      channelName: t('notification.channelName'),
+      channelDescription: t('notification.channelDescription'),
+    );
   }
 
   String weekdayShort(int weekday) => t('weekday.short.$weekday');
@@ -293,6 +311,13 @@ class AppController extends ChangeNotifier {
     "notification.instantTitle": "Instant check",
     "notification.nativeTestBody": "Should ring in {seconds} sec.",
     "notification.nativeTestTitle": "Native alarm test",
+    "notification.alarmAction.stop": "Stop",
+    "notification.alarmAction.solve": "Solve",
+    "notification.alarmAction.snooze5": "Snooze 5 min",
+    "notification.alarmSnoozedTitle": "Snoozed: alarm",
+    "notification.alarmSnoozedBody": "In 5 minutes",
+    "notification.channelName": "Smart Alarm",
+    "notification.channelDescription": "Alarm notifications",
     "settings.accent": "Theme color",
     "settings.appearance": "Appearance",
     "settings.color.blue": "Blue",
@@ -421,6 +446,13 @@ class AppController extends ChangeNotifier {
     "notification.instantTitle": "Миттєва перевірка",
     "notification.nativeTestBody": "Має спрацьовати через {seconds} сек.",
     "notification.nativeTestTitle": "Тест нативного будильника",
+    "notification.alarmAction.stop": "Зупинити",
+    "notification.alarmAction.solve": "Вирішити",
+    "notification.alarmAction.snooze5": "Відкласти на 5 хв",
+    "notification.alarmSnoozedTitle": "Відкладено: будильник",
+    "notification.alarmSnoozedBody": "Ще 5 хвилин",
+    "notification.channelName": "Розумний будильник",
+    "notification.channelDescription": "Сповіщення будильника",
     "settings.accent": "Колір теми",
     "settings.appearance": "Оформлення",
     "settings.color.blue": "Синій",

@@ -5,6 +5,7 @@ import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.util.Log
+import com.lastofend.plannig.alarm.AlarmLocalization
 import com.lastofend.plannig.alarm.RingingService
 import io.flutter.embedding.android.FlutterActivity
 import io.flutter.embedding.engine.FlutterEngine
@@ -56,6 +57,11 @@ class MainActivity : FlutterActivity() {
                 }
                 "stopRinging" -> {
                     stopService(Intent(this, RingingService::class.java))
+                    result.success(null)
+                }
+                "syncLocalization" -> {
+                    val values = call.arguments as? Map<*, *> ?: emptyMap<String, String>()
+                    AlarmLocalization.save(this, values)
                     result.success(null)
                 }
                 "consumeLaunchPayload" -> {

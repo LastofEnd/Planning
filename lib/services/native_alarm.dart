@@ -23,6 +23,36 @@ class NativeAlarm {
     await _ch.invokeMethod('stopRinging');
   }
 
+  static Future<void> syncLocalization({
+    required String actionStop,
+    required String actionSolve,
+    required String actionSnooze5,
+    required String snoozedTitle,
+    required String snoozedBody,
+    required String eventTime,
+    required String before5Title,
+    required String before5Body,
+    required String channelName,
+    required String channelDescription,
+  }) async {
+    try {
+      await _ch.invokeMethod('syncLocalization', {
+        'actionStop': actionStop,
+        'actionSolve': actionSolve,
+        'actionSnooze5': actionSnooze5,
+        'snoozedTitle': snoozedTitle,
+        'snoozedBody': snoozedBody,
+        'eventTime': eventTime,
+        'before5Title': before5Title,
+        'before5Body': before5Body,
+        'channelName': channelName,
+        'channelDescription': channelDescription,
+      });
+    } on MissingPluginException {
+    } on PlatformException {
+    }
+  }
+
   static Future<void> schedule({
     required int id,
     required DateTime when,
